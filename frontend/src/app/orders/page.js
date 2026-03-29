@@ -10,14 +10,14 @@
  * - Confirmation message for new orders
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, ChevronRight, Package, Truck, Home } from 'lucide-react';
 import { api } from '../../lib/api';
 import { useAuth } from '../../context/AuthContext';
 
-export default function OrdersPage() {
+function OrdersContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -217,3 +217,16 @@ export default function OrdersPage() {
     </div>
   );
 }
+
+export default function OrdersPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <p style={{ fontSize: '18px', fontWeight: '500', color: '#B12704' }}>Loading Your Orders...</p>
+      </div>
+    }>
+      <OrdersContent />
+    </Suspense>
+  );
+}
+
