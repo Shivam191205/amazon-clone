@@ -26,7 +26,7 @@ export default function Header() {
         <Link href="/">
           <img
             className={styles.header_logo}
-            src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg"
+            src="http://pngimg.com/uploads/amazon/amazon_PNG25.png"
             alt="Amazon Logo"
           />
         </Link>

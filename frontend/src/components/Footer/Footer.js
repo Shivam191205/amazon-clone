@@ -65,14 +65,14 @@ export default function Footer() {
       <div className={styles.footer_bottom}>
          <img
             className={styles.footer_logo}
-            src="https://pngimg.com/uploads/amazon/amazon_PNG11.png"
+            src="http://pngimg.com/uploads/amazon/amazon_PNG25.png"
             alt="Amazon Logo"
           />
           <div className={styles.footer_links}>
              <span>Conditions of Use</span>
              <span>Privacy Notice</span>
              <span>Interest-Based Ads</span>
-             <span>© 1996-2024, Amazon.com, Inc. or its affiliates</span>
+             <span>© 1996-2026, Amazon.com, Inc. or its affiliates</span>
           </div>
       </div>
     </footer>

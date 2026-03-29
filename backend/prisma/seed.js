@@ -89,9 +89,8 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'Sony', Model: 'WH-1000XM5', Color: 'Black', Connectivity: 'Bluetooth 5.2', Battery: '30 hours', Weight: '250g', 'Noise Cancellation': 'Yes - Adaptive' }),
       price: 28884, original_price: 33199, stock: 45, categorySlug: 'electronics', rating: 4.7, review_count: 12453, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=600&h=600&fit=crop', primary: true },
-        { url: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&h=600&fit=crop', primary: false },
-        { url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop', primary: false },
+        { url: 'https://m.media-amazon.com/images/I/61Kpx9+A8TL._AC_SL1500_.jpg', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/51r5I9A420L._AC_SL1500_.jpg', primary: false },
       ],
     },
     {
@@ -100,8 +99,8 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'Apple', Processor: 'M3 chip', RAM: '8GB', Storage: '256GB SSD', Display: '15.3" Liquid Retina', Battery: '18 hours', Weight: '1.51 kg' }),
       price: 103667, original_price: 107817, stock: 23, categorySlug: 'electronics', rating: 4.8, review_count: 8765, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop', primary: true },
-        { url: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&h=600&fit=crop', primary: false },
+        { url: 'https://m.media-amazon.com/images/I/71TPda7cwUL._AC_SL1500_.jpg', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/61mZkUp3WDL._AC_SL1500_.jpg', primary: false },
       ],
     },
     {
@@ -130,8 +129,8 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'Samsung', Model: 'Galaxy S24 Ultra', Storage: '256GB', RAM: '12GB', Display: '6.8" QHD+ AMOLED', Camera: '200MP', Battery: '5000mAh' }),
       price: 99599, original_price: 117859, stock: 34, categorySlug: 'electronics', rating: 4.6, review_count: 15432, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&h=600&fit=crop', primary: true },
-        { url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop', primary: false },
+        { url: 'https://m.media-amazon.com/images/I/71RVuS3q9ML._AC_SL1500_.jpg', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/71ZdySToJSL._AC_SL1500_.jpg', primary: false },
       ],
     },
     {
@@ -176,7 +175,7 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'Amazon', Model: 'Echo Dot 5th Gen', Speaker: '1.73" driver', Connectivity: 'Wi-Fi, Bluetooth', Assistant: 'Alexa' }),
       price: 2323, original_price: 4149, stock: 200, categorySlug: 'electronics', rating: 4.6, review_count: 45678, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1543512214-318c7553f230?w=600&h=600&fit=crop', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/61Kpx9+A8TL._AC_SL1000_.jpg', primary: true },
       ],
     },
     {
