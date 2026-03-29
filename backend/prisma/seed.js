@@ -65,12 +65,12 @@ async function main() {
   // 2. Create categories
   // ============================================
   const categoryData = [
-    { name: 'Electronics', slug: 'electronics', image_url: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=400&fit=crop' },
-    { name: 'Books', slug: 'books', image_url: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop' },
-    { name: 'Clothing', slug: 'clothing', image_url: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400&h=400&fit=crop' },
-    { name: 'Home & Kitchen', slug: 'home-kitchen', image_url: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop' },
-    { name: 'Sports & Outdoors', slug: 'sports-outdoors', image_url: 'https://images.unsplash.com/photo-1461896836934-bd45ba9c5e3a?w=400&h=400&fit=crop' },
-    { name: 'Beauty & Personal Care', slug: 'beauty-personal-care', image_url: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop' },
+    { name: 'Electronics', slug: 'electronics', image_url: 'https://m.media-amazon.com/images/I/61Kpx9+A8TL._AC_SL1500_.jpg' },
+    { name: 'Books', slug: 'books', image_url: 'https://m.media-amazon.com/images/I/71N6i9p7yCL._SL1500_.jpg' },
+    { name: 'Clothing', slug: 'clothing', image_url: 'https://m.media-amazon.com/images/I/71uV2v2eWBL._AC_UX569_.jpg' },
+    { name: 'Home & Kitchen', slug: 'home-kitchen', image_url: 'https://m.media-amazon.com/images/I/81xG-Y-u3IL._AC_SL1500_.jpg' },
+    { name: 'Sports & Outdoors', slug: 'sports-outdoors', image_url: 'https://m.media-amazon.com/images/I/516T9C+S-6L._AC_SL1500_.jpg' },
+    { name: 'Beauty & Personal Care', slug: 'beauty-personal-care', image_url: 'https://m.media-amazon.com/images/I/61S4h1-4P+L._AC_SL1500_.jpg' },
   ];
 
   const categories = await Category.insertMany(categoryData);
@@ -527,7 +527,7 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'Dyson', Power: '1300W', Technology: 'Coanda Airflow', HeatSettings: 3 }),
       price: 49799, original_price: 49799, stock: 12, categorySlug: 'beauty-personal-care', rating: 4.6, review_count: 5432, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1522338242992-e1a54571a3f3?w=600&h=600&fit=crop', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/61l5KkEytnL._SL1500_.jpg', primary: true },
       ],
     },
     {
@@ -536,7 +536,7 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'Laneige', Scent: 'Berry', Size: '20g', SkinType: 'All' }),
       price: 1992, original_price: 1992, stock: 449, categorySlug: 'beauty-personal-care', rating: 4.8, review_count: 34567, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=600&fit=crop', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/41R7LCjddAL._SL1100_.jpg', primary: true },
       ],
     },
     {
@@ -545,7 +545,7 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'CeraVe', Size: '19oz', Type: 'Cream', 'Skin Type': 'All' }),
       price: 1214, original_price: 1659, stock: 345, categorySlug: 'beauty-personal-care', rating: 4.8, review_count: 98765, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&h=600&fit=crop', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/61zO5gx-PHL._SL1500_.jpg', primary: true },
       ],
     },
     {
@@ -554,7 +554,7 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'Neutrogena', Size: '1.7oz', Type: 'Water Gel', Key: 'Hyaluronic Acid' }),
       price: 1289, original_price: 1949, stock: 234, categorySlug: 'beauty-personal-care', rating: 4.6, review_count: 56789, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1570194065650-d99fb4b38b17?w=600&h=600&fit=crop', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/71K4KnBq6KL._SL1500_.jpg', primary: true },
       ],
     },
     {
@@ -563,7 +563,7 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'Philips', Model: 'OneBlade', Battery: '60 min', Waterproof: 'Yes' }),
       price: 2902, original_price: 4564, stock: 156, categorySlug: 'beauty-personal-care', rating: 4.5, review_count: 34567, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1585652757141-8837d023e98f?w=600&h=600&fit=crop', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/71JCvmCt-WL._SL1500_.jpg', primary: true },
       ],
     },
     {
@@ -572,7 +572,7 @@ async function main() {
       specifications: JSON.stringify({ Brand: 'Maybelline', Type: 'Mascara', Effect: 'Lengthening', 'Key Ingredient': 'Bamboo Extract' }),
       price: 745, original_price: 1120, stock: 456, categorySlug: 'beauty-personal-care', rating: 4.4, review_count: 67890, is_prime: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1631214540553-3707be37d408?w=600&h=600&fit=crop', primary: true },
+        { url: 'https://m.media-amazon.com/images/I/71MQo8pHmBL._SL1500_.jpg', primary: true },
       ],
     },
     {
