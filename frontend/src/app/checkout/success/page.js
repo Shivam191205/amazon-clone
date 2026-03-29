@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, Truck, Package, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
-export default function OrderSuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get('id');
@@ -14,7 +14,7 @@ export default function OrderSuccessPage() {
   const [date, setDate] = useState('');
 
   useEffect(() => {
-    // Generate a交付 date (3 days from now)
+    // Generate a delivery date (3 days from now)
     const d = new Date();
     d.setDate(d.getDate() + 3);
     setDate(d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' }));
@@ -96,3 +96,12 @@ export default function OrderSuccessPage() {
     </div>
   );
 }
+
+export default function OrderSuccessPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: '40px', textAlign: 'center' }}>Loading confirmation...</div>}>
+      <SuccessContent />
+    </Suspense>
+  );
+}
+
