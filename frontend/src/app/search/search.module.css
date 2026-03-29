@@ -1,0 +1,126 @@
+/* Amazon Clone - Homepage Styling */
+
+.home {
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--max-width);
+}
+
+.home_container {
+  /* No specific container styles needed for now */
+}
+
+/* Hero Carousel */
+.hero {
+  width: 100%;
+  z-index: -1;
+  margin-bottom: -150px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+}
+
+.hero_image {
+  width: 100%;
+}
+
+/* Category Grid */
+.category_grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  z-index: 1;
+  margin: 0 10px;
+}
+
+.category_card {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  width: 300px;
+  height: 420px;
+  margin: 10px;
+  padding: 20px;
+  z-index: 1;
+}
+
+.category_card h2 {
+  font-size: 21px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.category_card_image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.category_card_link {
+  color: var(--amazon-link);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.category_card_link:hover {
+  text-decoration: underline;
+  color: #c45500;
+}
+
+/* Product Feed */
+.product_feed {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+  background-color: var(--amazon-bg);
+}
+
+/* Product Card */
+.product_card {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  z-index: 1;
+  width: 250px;
+  margin: 10px;
+  padding: 20px;
+  max-height: 400px;
+  transition: transform 0.2s;
+}
+
+.product_card:hover {
+  transform: scale(1.02);
+}
+
+.product_card_info {
+  height: 100px;
+  margin-bottom: 15px;
+}
+
+.product_card_price {
+  margin-top: 5px;
+}
+
+.product_card_rating {
+  display: flex;
+  color: #de7921;
+}
+
+.product_card_image {
+  max-height: 200px;
+  width: 100%;
+  object-fit: contain;
+  margin-bottom: 15px;
+}
+
+.product_card button {
+  background: #f0c14b;
+  border: 1px solid;
+  margin-top: 10px;
+  border-color: #a88734 #9c7e31 #846a29;
+  color: #111;
+  padding: 5px 10px;
+  border-radius: 4px;
+}

@@ -1,0 +1,119 @@
+/* Amazon Clone - Product Detail Styling */
+
+.product_detail {
+  display: flex;
+  padding: 20px;
+  background-color: white;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+/* Left: Image Gallery */
+.detail_gallery {
+  flex: 0.4;
+  margin-right: 20px;
+}
+
+.detail_main_image {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.detail_thumbnails {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.detail_thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.detail_thumbnail:hover, .detail_thumbnail_active {
+  border-color: var(--amazon-orange);
+  box-shadow: 0 0 3px 1px var(--amazon-orange);
+}
+
+/* Middle: Product Info */
+.detail_info {
+  flex: 0.4;
+  margin-right: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.detail_info h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  margin-bottom: 10px;
+}
+
+.detail_info_rating {
+  margin-bottom: 10px;
+}
+
+.detail_info_price {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.detail_info_description {
+  margin-top: 20px;
+}
+
+.detail_info_description h3 {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+/* Right: Buy Box */
+.detail_buy_box {
+  flex: 0.2;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 80px;
+}
+
+.buy_box_price {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.buy_box_stock {
+  color: #007600;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.buy_box_quantity {
+  margin-bottom: 15px;
+}
+
+.buy_box_quantity select {
+  padding: 5px;
+  border-radius: 4px;
+  background: #f0f2f2;
+  border-color: #d5d9d9;
+}
+
+.buy_box_buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buy_box_buttons button {
+  width: 100%;
+}

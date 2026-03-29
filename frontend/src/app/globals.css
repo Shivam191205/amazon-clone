@@ -1,0 +1,152 @@
+/* Amazon Clone - Global Design System */
+
+:root {
+  /* Modernized Amazon Exact Color Palette */
+  --amazon-black: #0f1111; /* Deeper, sleeker black */
+  --amazon-navy: #131A22; /* Sleeker navy */
+  --amazon-nav-belt: #1A212E; /* Secondary navy for headers */
+  --amazon-orange: #ff9900; /* Vibrant Amazon Orange */
+  --amazon-orange-hover: #e58a00;
+  --amazon-yellow: #fcd200; /* Modern bright yellow */
+  --amazon-yellow-hover: #e3bc00;
+  --amazon-price: #B12704;
+  --amazon-link: #007185;
+  --amazon-link-hover: #c45500;
+  --amazon-gray: #e6e6e6; /* Softer gray borders */
+  --amazon-bg: #f2f4f8; /* Soft cool gray for better contrast with white cards */
+  --white: #ffffff;
+  
+  /* Layout & Spacing */
+  --header-height: 64px;
+  --nav-height: 42px;
+  --max-width: 1536px;
+  --border-radius: 8px; /* Standardize softer corners */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08); /* Modern subtle shadow */
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.06); /* Modern medium shadow */
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.05); /* Modern large shadow */
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  /* Font defined in layout.js using next/font/google (Inter) */
+  background-color: var(--amazon-bg);
+  color: var(--amazon-black);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--amazon-link);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--amazon-link-hover);
+  text-decoration: underline;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: var(--transition);
+}
+
+/* Amazon Button Styles (Modernized) */
+.amz-button {
+  background: var(--amazon-yellow);
+  border: 1px solid transparent;
+  border-radius: 100px; /* Pill-shape for sleek modern UI */
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.amz-button:hover {
+  background: var(--amazon-yellow-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.amz-button:active {
+  transform: translateY(0);
+}
+
+.amz-button-primary {
+  background: var(--amazon-orange);
+  color: white;
+  border-radius: 100px; /* Pill-shape for primary actions */
+}
+
+.amz-button-primary:hover {
+  background: var(--amazon-orange-hover);
+}
+
+/* Card Utility Class */
+.amz-card {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+  transition: var(--transition);
+}
+
+.amz-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Typography */
+h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+h3 { font-size: 18px; font-weight: 600; }
+
+.price {
+  color: var(--amazon-price);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.price-symbol {
+  font-size: 14px;
+  vertical-align: super;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+/* Custom Scrollbar for sleekness */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--amazon-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}

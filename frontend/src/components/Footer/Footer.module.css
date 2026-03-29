@@ -1,0 +1,83 @@
+/* Amazon Clone - Footer Styling */
+
+.footer {
+  margin-top: 40px;
+  background-color: var(--amazon-navy);
+  color: white;
+}
+
+.back_to_top {
+  background-color: #37475a;
+  padding: 15px;
+  text-align: center;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.back_to_top:hover {
+  background-color: #485769;
+}
+
+.footer_container {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  padding: 40px 10px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.footer_column h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.footer_column ul {
+  padding: 0;
+  list-style: none;
+}
+
+.footer_column li {
+  font-size: 14px;
+  color: #ddd;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.footer_column li:hover {
+  text-decoration: underline;
+}
+
+.footer_bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 1px solid #3a4553;
+  padding: 40px 0;
+  background-color: var(--amazon-navy);
+}
+
+.footer_logo {
+  width: 80px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  margin-top: -10px;
+}
+
+.footer_links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  font-size: 12px;
+  color: #ddd;
+}
+
+.footer_links span {
+  cursor: pointer;
+}
+
+.footer_links span:hover {
+  text-decoration: underline;
+}
