@@ -1,38 +1,39 @@
 /**
- * Wishlist Controller (Using 'pg' Pool directly)
+ * Wishlist Controller (MongoDB/Mongoose)
  */
 
-const db = require('../config/db');
-const { formatProduct } = require('../utils/helpers');
+const WishlistItem = require('../models/WishlistItem');
+const Product = require('../models/Product');
+const ProductImage = require('../models/ProductImage');
 
 /**
  * GET /api/wishlist
  */
 const getWishlist = async (req, res, next) => {
   try {
-    const { rows: wishlistItems } = await db.query(
-      `SELECT wi.*, p.name, p.price, p.stock, p.rating, p.review_count, p.is_prime,
-              pi.image_url as primary_image
-       FROM wishlist_items wi
-       LEFT JOIN products p ON wi.product_id = p.id
-       LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = TRUE
-       WHERE wi.user_id = $1
-       ORDER BY wi.created_at DESC`,
-      [req.user.id]
-    );
+    const wishlistItems = await WishlistItem.find({ user_id: req.user.id })
+      .populate('product_id', 'name price stock rating review_count is_prime')
+      .sort({ created_at: -1 })
+      .lean();
+
+    // Get primary images
+    const productIds = wishlistItems.map(wi => wi.product_id?._id).filter(Boolean);
+    const primaryImages = await ProductImage.find({ product_id: { $in: productIds }, is_primary: true }).lean();
+    const imageMap = {};
+    primaryImages.forEach(img => { imageMap[img.product_id.toString()] = img.image_url; });
 
     const formatted = wishlistItems.map((item) => ({
-      id: item.id,
-      product: {
-        id: item.product_id,
-        name: item.name,
-        price: parseFloat(item.price),
-        stock: item.stock,
-        rating: item.rating,
-        reviewCount: item.review_count,
-        isPrime: item.is_prime,
-        image: item.primary_image,
-      },
+      id: item._id,
+      product: item.product_id ? {
+        id: item.product_id._id,
+        name: item.product_id.name,
+        price: item.product_id.price,
+        stock: item.product_id.stock,
+        rating: item.product_id.rating,
+        reviewCount: item.product_id.review_count,
+        isPrime: item.product_id.is_prime,
+        image: imageMap[item.product_id._id.toString()] || null,
+      } : null,
     }));
 
     res.json({ success: true, data: formatted });
@@ -48,26 +49,19 @@ const addToWishlist = async (req, res, next) => {
   try {
     const { productId } = req.body;
 
-    const { rows: products } = await db.query('SELECT * FROM products WHERE id = $1', [productId]);
-    if (products.length === 0) {
+    const product = await Product.findById(productId);
+    if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
-    const { rows: existing } = await db.query(
-      'SELECT * FROM wishlist_items WHERE user_id = $1 AND product_id = $2',
-      [req.user.id, productId]
-    );
-
-    if (existing.length > 0) {
-      return res.json({ success: true, message: 'Item already in wishlist', data: existing[0] });
+    const existing = await WishlistItem.findOne({ user_id: req.user.id, product_id: productId });
+    if (existing) {
+      return res.json({ success: true, message: 'Item already in wishlist', data: existing });
     }
 
-    const { rows: created } = await db.query(
-      'INSERT INTO wishlist_items (user_id, product_id) VALUES ($1, $2) RETURNING *',
-      [req.user.id, productId]
-    );
+    const created = await WishlistItem.create({ user_id: req.user.id, product_id: productId });
 
-    res.status(201).json({ success: true, message: 'Item added to wishlist', data: created[0] });
+    res.status(201).json({ success: true, message: 'Item added to wishlist', data: created });
   } catch (error) {
     next(error);
   }
@@ -79,7 +73,7 @@ const addToWishlist = async (req, res, next) => {
 const removeFromWishlist = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await db.query('DELETE FROM wishlist_items WHERE id = $1', [id]);
+    await WishlistItem.findByIdAndDelete(id);
     res.json({ success: true, message: 'Item removed from wishlist' });
   } catch (error) {
     next(error);

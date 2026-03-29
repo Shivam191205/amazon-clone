@@ -1,13 +1,14 @@
 /**
  * Amazon Clone - Backend Server
  * 
- * Express.js REST API server with PostgreSQL database via Prisma ORM.
+ * Express.js REST API server with MongoDB database via Mongoose.
  * Serves product, cart, order, and wishlist endpoints.
  */
 
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 // Import routes
@@ -66,13 +67,16 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 // ============================================
-// START SERVER
+// CONNECT DB AND START SERVER
 // ============================================
-app.listen(PORT, () => {
-  console.log(`\n🚀 Amazon Clone API Server`);
-  console.log(`   Running on: http://localhost:${PORT}`);
-  console.log(`   Health:     http://localhost:${PORT}/api/health`);
-  console.log(`   Environment: ${process.env.NODE_ENV || 'development'}\n`);
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`\n🚀 Amazon Clone API Server`);
+    console.log(`   Running on: http://localhost:${PORT}`);
+    console.log(`   Health:     http://localhost:${PORT}/api/health`);
+    console.log(`   Database:   MongoDB`);
+    console.log(`   Environment: ${process.env.NODE_ENV || 'development'}\n`);
+  });
 });
 
 module.exports = app;

@@ -5,6 +5,8 @@
  * Validates required fields and data types for API requests.
  */
 
+const mongoose = require('mongoose');
+
 /**
  * Validates that required fields are present in the request body
  * @param {string[]} fields - Array of required field names
@@ -27,19 +29,18 @@ const requireFields = (fields) => {
 };
 
 /**
- * Validates that a URL parameter is a valid positive integer
+ * Validates that a URL parameter is a valid MongoDB ObjectId
  * @param {string} paramName - Name of the URL parameter to validate
  */
 const validateId = (paramName = 'id') => {
   return (req, res, next) => {
-    const id = parseInt(req.params[paramName], 10);
-    if (isNaN(id) || id <= 0) {
+    const id = req.params[paramName];
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: `Invalid ${paramName}: must be a positive integer`,
+        message: `Invalid ${paramName}: must be a valid ID`,
       });
     }
-    req.params[paramName] = id;
     next();
   };
 };

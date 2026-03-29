@@ -1,8 +1,10 @@
 /**
- * Category Controller (Using 'pg' Pool directly)
+ * Category Controller (MongoDB/Mongoose)
  */
 
-const db = require('../config/db');
+const Category = require('../models/Category');
+const Product = require('../models/Product');
+const ProductImage = require('../models/ProductImage');
 const { parsePagination, formatProduct, calculateDiscount } = require('../utils/helpers');
 
 /**
@@ -11,14 +13,19 @@ const { parsePagination, formatProduct, calculateDiscount } = require('../utils/
  */
 const getCategories = async (req, res, next) => {
   try {
-    const { rows: categories } = await db.query(
-      `SELECT c.*, (SELECT count(*) FROM products WHERE category_id = c.id) as product_count 
-       FROM categories c ORDER BY name ASC`
+    const categories = await Category.find().sort({ name: 1 }).lean();
+
+    // Get product counts per category
+    const categoriesWithCount = await Promise.all(
+      categories.map(async (cat) => {
+        const product_count = await Product.countDocuments({ category_id: cat._id });
+        return { ...cat, id: cat._id, product_count };
+      })
     );
 
     res.json({
       success: true,
-      data: categories,
+      data: categoriesWithCount,
     });
   } catch (error) {
     next(error);
@@ -34,31 +41,33 @@ const getProductsByCategory = async (req, res, next) => {
     const { slug } = req.params;
     const { page, limit, skip } = parsePagination(req.query);
 
-    const { rows: categories } = await db.query('SELECT * FROM categories WHERE slug = $1', [slug]);
-    if (categories.length === 0) {
+    const category = await Category.findOne({ slug });
+    if (!category) {
       return res.status(404).json({ success: false, message: 'Category not found' });
     }
-    const category = categories[0];
 
-    const { rows: products } = await db.query(
-      `SELECT p.*, c.name as category_name, c.slug as category_slug,
-              pi.image_url as primary_image
-       FROM products p
-       LEFT JOIN categories c ON p.category_id = c.id
-       LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = TRUE
-       WHERE p.category_id = $1
-       ORDER BY p.rating DESC
-       LIMIT ${limit} OFFSET ${skip}`,
-      [category.id]
-    );
+    const filter = { category_id: category._id };
 
-    const { rows: countRows } = await db.query('SELECT count(*) FROM products WHERE category_id = $1', [category.id]);
-    const total = parseInt(countRows[0].count, 10);
+    const [products, total] = await Promise.all([
+      Product.find(filter)
+        .sort({ rating: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('category_id', 'name slug')
+        .lean(),
+      Product.countDocuments(filter),
+    ]);
+
+    // Get primary images
+    const productIds = products.map(p => p._id);
+    const primaryImages = await ProductImage.find({ product_id: { $in: productIds }, is_primary: true }).lean();
+    const imageMap = {};
+    primaryImages.forEach(img => { imageMap[img.product_id.toString()] = img.image_url; });
 
     const formatted = products.map((p) => ({
       ...formatProduct(p),
-      category: { name: p.category_name, slug: p.category_slug },
-      image: p.primary_image,
+      category: p.category_id ? { name: p.category_id.name, slug: p.category_id.slug } : null,
+      image: imageMap[p._id.toString()] || null,
       discount: calculateDiscount(p.original_price, p.price),
     }));
 

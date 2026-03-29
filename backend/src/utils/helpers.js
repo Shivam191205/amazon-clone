@@ -5,12 +5,6 @@
  */
 
 /**
- * Default user ID for the application.
- * Since authentication is not required, all operations use this default user.
- */
-const DEFAULT_USER_ID = 1;
-
-/**
  * Parse pagination parameters from query string
  * @param {object} query - Express request query object
  * @returns {{ page: number, limit: number, skip: number }}
@@ -23,19 +17,24 @@ const parsePagination = (query) => {
 };
 
 /**
- * Format a product's price fields from Decimal to number
- * @param {object} product - Prisma product object
+ * Format a product's price fields from DB document to API response
+ * @param {object} product - MongoDB product document
  * @returns {object} Product with formatted prices
  */
 const formatProduct = (product) => {
   if (!product) return null;
   return {
-    ...product,
-    price: parseFloat(product.price),
-    originalPrice: product.original_price ? parseFloat(product.original_price) : null,
-    rating: parseFloat(product.rating),
-    isPrime: product.is_prime,
+    id: product._id,
+    name: product.name,
+    description: product.description,
+    specifications: product.specifications,
+    price: product.price,
+    originalPrice: product.original_price || null,
+    stock: product.stock,
+    rating: product.rating,
     reviewCount: product.review_count,
+    isPrime: product.is_prime,
+    createdAt: product.created_at,
   };
 };
 
@@ -51,7 +50,6 @@ const calculateDiscount = (originalPrice, currentPrice) => {
 };
 
 module.exports = {
-  DEFAULT_USER_ID,
   parsePagination,
   formatProduct,
   calculateDiscount,

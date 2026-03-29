@@ -1,12 +1,15 @@
 /**
- * Product Controller (Using 'pg' Pool directly)
+ * Product Controller (MongoDB/Mongoose)
  * 
  * Handles all product-related operations:
  * - List products with search, filter, and pagination
  * - Get single product details with images
  */
 
-const db = require('../config/db');
+const Product = require('../models/Product');
+const ProductImage = require('../models/ProductImage');
+const Category = require('../models/Category');
+const Review = require('../models/Review');
 const { parsePagination, formatProduct, calculateDiscount } = require('../utils/helpers');
 
 /**
@@ -18,45 +21,55 @@ const getProducts = async (req, res, next) => {
     const { search, category, sort } = req.query;
     const { page, limit, skip } = parsePagination(req.query);
 
-    let queryText = `
-      SELECT p.*, c.name as category_name, c.slug as category_slug,
-             pi.image_url as primary_image
-      FROM products p
-      LEFT JOIN categories c ON p.category_id = c.id
-      LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = TRUE
-      WHERE 1=1
-    `;
-    const queryParams = [];
+    let filter = {};
 
     if (search) {
-      queryParams.push(`%${search}%`);
-      queryText += ` AND (p.name ILIKE $${queryParams.length} OR p.description ILIKE $${queryParams.length} OR p.specifications ILIKE $${queryParams.length} OR c.name ILIKE $${queryParams.length})`;
+      const regex = new RegExp(search, 'i');
+      // Also search by category name
+      const matchingCategories = await Category.find({ name: regex }).select('_id');
+      const catIds = matchingCategories.map(c => c._id);
+
+      filter.$or = [
+        { name: regex },
+        { description: regex },
+        { specifications: regex },
+        { category_id: { $in: catIds } },
+      ];
     }
 
     if (category) {
-      queryParams.push(category);
-      queryText += ` AND c.slug = $${queryParams.length}`;
+      const cat = await Category.findOne({ slug: category });
+      if (cat) {
+        filter.category_id = cat._id;
+      }
     }
 
     // Sort order
-    if (sort === 'price_asc') queryText += ' ORDER BY p.price ASC';
-    else if (sort === 'price_desc') queryText += ' ORDER BY p.price DESC';
-    else if (sort === 'rating') queryText += ' ORDER BY p.rating DESC';
-    else queryText += ' ORDER BY p.created_at DESC';
+    let sortObj = { created_at: -1 };
+    if (sort === 'price_asc') sortObj = { price: 1 };
+    else if (sort === 'price_desc') sortObj = { price: -1 };
+    else if (sort === 'rating') sortObj = { rating: -1 };
 
-    // Pagination
-    queryText += ` LIMIT ${limit} OFFSET ${skip}`;
+    const [products, total] = await Promise.all([
+      Product.find(filter)
+        .sort(sortObj)
+        .skip(skip)
+        .limit(limit)
+        .populate('category_id', 'name slug')
+        .lean(),
+      Product.countDocuments(filter),
+    ]);
 
-    const { rows: products } = await db.query(queryText, queryParams);
-    
-    // Total count for pagination
-    const { rows: countRows } = await db.query('SELECT count(*) FROM products');
-    const total = parseInt(countRows[0].count, 10);
+    // Get primary images for all products
+    const productIds = products.map(p => p._id);
+    const primaryImages = await ProductImage.find({ product_id: { $in: productIds }, is_primary: true }).lean();
+    const imageMap = {};
+    primaryImages.forEach(img => { imageMap[img.product_id.toString()] = img.image_url; });
 
     const formatted = products.map((p) => ({
       ...formatProduct(p),
-      category: { name: p.category_name, slug: p.category_slug },
-      image: p.primary_image,
+      category: p.category_id ? { name: p.category_id.name, slug: p.category_id.slug } : null,
+      image: imageMap[p._id.toString()] || null,
       discount: calculateDiscount(p.original_price, p.price),
     }));
 
@@ -76,43 +89,36 @@ const getProducts = async (req, res, next) => {
 const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    
-    const { rows: productRows } = await db.query(
-      `SELECT p.*, c.name as category_name, c.slug as category_slug
-       FROM products p
-       LEFT JOIN categories c ON p.category_id = c.id
-       WHERE p.id = $1`,
-      [id]
-    );
 
-    if (productRows.length === 0) {
+    const product = await Product.findById(id).populate('category_id', 'name slug').lean();
+    if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
-    const product = productRows[0];
-    
     // Get all images
-    const { rows: images } = await db.query(
-      'SELECT image_url, is_primary, sort_order FROM product_images WHERE product_id = $1 ORDER BY sort_order ASC',
-      [id]
-    );
+    const images = await ProductImage.find({ product_id: id }).sort({ sort_order: 1 }).lean();
 
     // Get reviews with user names
-    const { rows: reviews } = await db.query(
-       `SELECT r.id, r.rating, r.comment, r.created_at, u.name as user_name 
-        FROM reviews r 
-        LEFT JOIN users u ON r.user_id = u.id 
-        WHERE r.product_id = $1 ORDER BY r.created_at DESC`,
-       [id]
-    );
+    const reviews = await Review.find({ product_id: id })
+      .populate('user_id', 'name')
+      .sort({ created_at: -1 })
+      .lean();
+
+    const formattedReviews = reviews.map(r => ({
+      id: r._id,
+      rating: r.rating,
+      comment: r.comment,
+      created_at: r.created_at,
+      user_name: r.user_id ? r.user_id.name : 'Unknown',
+    }));
 
     res.json({
       success: true,
       data: {
         ...formatProduct(product),
-        category: { name: product.category_name, slug: product.category_slug },
-        images: images,
-        reviews: reviews,
+        category: product.category_id ? { name: product.category_id.name, slug: product.category_id.slug } : null,
+        images: images.map(i => ({ image_url: i.image_url, is_primary: i.is_primary, sort_order: i.sort_order })),
+        reviews: formattedReviews,
         discount: calculateDiscount(product.original_price, product.price),
       },
     });
@@ -127,25 +133,30 @@ const getProductById = async (req, res, next) => {
  */
 const getDealProducts = async (req, res, next) => {
   try {
-    const { rows: products } = await db.query(
-      `SELECT p.*, c.name as category_name, c.slug as category_slug,
-              pi.image_url as primary_image
-       FROM products p
-       LEFT JOIN categories c ON p.category_id = c.id
-       LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = TRUE
-       WHERE p.original_price > p.price
-       ORDER BY (p.original_price - p.price) / p.original_price DESC
-       LIMIT 10`
-    );
+    const products = await Product.find({
+      original_price: { $ne: null },
+      $expr: { $gt: ['$original_price', '$price'] },
+    })
+      .populate('category_id', 'name slug')
+      .lean();
+
+    // Get primary images
+    const productIds = products.map(p => p._id);
+    const primaryImages = await ProductImage.find({ product_id: { $in: productIds }, is_primary: true }).lean();
+    const imageMap = {};
+    primaryImages.forEach(img => { imageMap[img.product_id.toString()] = img.image_url; });
 
     const formatted = products.map((p) => ({
       ...formatProduct(p),
-      category: { name: p.category_name, slug: p.category_slug },
-      image: p.primary_image,
+      category: p.category_id ? { name: p.category_id.name, slug: p.category_id.slug } : null,
+      image: imageMap[p._id.toString()] || null,
       discount: calculateDiscount(p.original_price, p.price),
     }));
 
-    res.json({ success: true, data: formatted });
+    // Sort by discount percentage descending
+    formatted.sort((a, b) => b.discount - a.discount);
+
+    res.json({ success: true, data: formatted.slice(0, 10) });
   } catch (error) {
     next(error);
   }
@@ -165,24 +176,25 @@ const addReview = async (req, res, next) => {
     }
 
     // Insert review
-    await db.query(
-      'INSERT INTO reviews (user_id, product_id, rating, comment) VALUES ($1, $2, $3, $4)',
-      [req.user.id, id, rating, comment]
-    );
+    await Review.create({
+      user_id: req.user.id,
+      product_id: id,
+      rating,
+      comment,
+    });
 
     // Update product average rating & review count
-    const { rows: reviewStats } = await db.query(
-      'SELECT COUNT(*) as count, AVG(rating) as avg_rating FROM reviews WHERE product_id = $1',
-      [id]
-    );
+    const stats = await Review.aggregate([
+      { $match: { product_id: require('mongoose').Types.ObjectId.createFromHexString(id) } },
+      { $group: { _id: null, count: { $sum: 1 }, avg_rating: { $avg: '$rating' } } },
+    ]);
 
-    const count = parseInt(reviewStats[0].count, 10);
-    const avgRating = parseFloat(reviewStats[0].avg_rating).toFixed(1);
-
-    await db.query(
-      'UPDATE products SET review_count = $1, rating = $2 WHERE id = $3',
-      [count, avgRating, id]
-    );
+    if (stats.length > 0) {
+      await Product.findByIdAndUpdate(id, {
+        review_count: stats[0].count,
+        rating: parseFloat(stats[0].avg_rating.toFixed(1)),
+      });
+    }
 
     res.status(201).json({ success: true, message: 'Review added successfully' });
   } catch (error) {

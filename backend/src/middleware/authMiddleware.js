@@ -5,7 +5,7 @@
  */
 
 const jwt = require('jsonwebtoken');
-const db = require('../config/db');
+const User = require('../models/User');
 
 const protect = async (req, res, next) => {
   let token;
@@ -23,14 +23,13 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key_amazon_clone');
 
       // Get user from token
-      const { rows } = await db.query('SELECT id, name, email FROM users WHERE id = $1', [decoded.id]);
-      
-      if (rows.length === 0) {
+      const user = await User.findById(decoded.id).select('name email');
+      if (!user) {
         return res.status(401).json({ success: false, message: 'Not authorized, user not found' });
       }
 
       // Attach user to request
-      req.user = rows[0];
+      req.user = { id: user._id, name: user.name, email: user.email };
       next();
     } catch (error) {
       console.error('JWT Error:', error);
